@@ -44,12 +44,16 @@ def python_knit_graph(timg, tdrawable, x_scale=14, y_scale=10):
             x2 = x1 + x_scale
             y1 = y_scale*y
             y2 = y1 + y_scale
+	    if (x%10 == 9):
+                x2 = x2 - 1
+	    if (y%10 == 9):
+                y2 = y2 - 1
 	    if (x%10 == 0):
-                x1 = x_scale*x + 3
+                x1 = x_scale*x + 2
             else:
                 x1 = x_scale*x + 1
 	    if (y%10 == 0):
-                y1 = y_scale*y + 3
+                y1 = y_scale*y + 2
             else:
                 y1 = y_scale*y + 1
 
