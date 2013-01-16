@@ -1,0 +1,4 @@
+I have designed a few knitting patterns in gimp. One pixel per
+stitch works pretty well - until it's time to print the thing. This
+script expands your pattern (scale factor is user selectable) and
+draws it with black lines, thicker black lines every ten stitches.
