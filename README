@@ -9,3 +9,10 @@ similar) then change it to executable:
 chmod 755 *.py
 
 It should show up under the Image menu.
+
+On a Mac, the directory is now:
+
+   $HOME/Library/Application\ Support/GIMP/2.8/plug-ins
+
+Note: If you have an alpha channel, the results look weird.
+Better to remove it.
