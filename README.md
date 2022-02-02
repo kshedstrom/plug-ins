@@ -44,8 +44,8 @@ I don't have a PC to test, so I don't know where to put things there.
 # Things to fix
 
 Note: If you have an alpha channel, the results of the knitting
-script looks weird. Better to remove the alpha channel, though that
-is a bug I might fix someday, someday.
+script looks weird. Better to remove the alpha channel (image -> flatten),
+though that is a bug I might fix someday, someday.
 
 I wish I knew how to make the brushes work with the foreground color.
 Is that on my end or GIMP's?
