@@ -21,11 +21,15 @@ from gi.repository import GLib
 from gi.repository import Gio
 from gi.repository import GObject
 
+PROC_NAME = "kh-python3-kogin-graph"
 
 class KoginGraphPlugin(Gimp.PlugIn):
 
     def do_query_procedures(self):
-        return ["python-fu-kogin-graph"]
+        return [PROC_NAME]
+
+    def do_set_i18n (self, name):
+        return False
 
     def do_create_procedure(self, name):
         procedure = Gimp.ImageProcedure.new(
@@ -53,7 +57,7 @@ class KoginGraphPlugin(Gimp.PlugIn):
         procedure.set_attribution(
             "Kate Hedstrom",
             "Kate Hedstrom",
-            "2021",
+            "2021/2026",
         )
 
         procedure.add_int_argument(
@@ -79,16 +83,32 @@ class KoginGraphPlugin(Gimp.PlugIn):
         return procedure
 
     def run(self, procedure, run_mode, image, drawables, config, data):
-        drawable = drawables[0]
+        if len(drawables) < 1:
+            return procedure.new_return_values(
+                Gimp.PDBStatusType.CALLING_ERROR,
+                GLib.Error("Knit graph needs an active drawable/layer", PROC_NAME, 0),
+            )
+
+        src_drawable = drawables[0]
 
         x_scale = config.get_property("x_scale")
         y_scale = config.get_property("y_scale")
 
-        width = drawable.get_width()
-        height = drawable.get_height()
+        if x_scale < 1 or y_scale < 1:
+            return procedure.new_return_values(
+                Gimp.PDBStatusType.CALLING_ERROR,
+                GLib.Error("Scale values must be at least 1", PROC_NAME, 0),
+            )
+
+        width = src_drawable.get_width()
+        height = src_drawable.get_height()
 
         new_width = width * x_scale
         new_height = height * y_scale + 2
+
+        # This is an RGB plug-in result, matching the original GIMP 2 script.
+        bytes_per_pixel = 3
+        pixel_format = "RGB u8"
 
         new_image = Gimp.Image.new(new_width, new_height, Gimp.ImageBaseType.RGB)
 
@@ -103,24 +123,22 @@ class KoginGraphPlugin(Gimp.PlugIn):
         )
 
         new_image.insert_layer(layer, None, 0)
-
-        src_buffer = drawable.get_buffer()
         dst_buffer = layer.get_buffer()
 
+        src_buffer = src_drawable.get_buffer()
         src_rect = Gegl.Rectangle.new(0, 0, width, height)
-        src_bytes = src_buffer.get(
-            src_rect,
-            1.0,
-            None,
-            Gegl.AbyssPolicy.NONE,
-        )
+        src_pixels = bytearray(src_buffer.get(src_rect, 1.0, pixel_format, Gegl.AbyssPolicy.NONE))
 
-        src_pixels = array("B", src_bytes.get_data())
+        p_size = src_drawable.get_bpp()
 
-        p_size = drawable.get_bpp()
-
+        dest_pixels = bytearray(new_width * new_height * p_size)
         # Start with white background
-        dest_pixels = array("B", [255] * (new_width * new_height * p_size))
+        for i in range(0, len(dest_pixels), p_size):
+            dest_pixels[i] = 255     # Red
+            dest_pixels[i+1] = 255   # Green
+            dest_pixels[i+2] = 255   # Blue
+            if (p_size == 4):
+                dest_pixels[i+3] = 255   # Alpha (fully opaque)
 
         blackval = array("B", [0] * p_size)
         whiteval = array("B", [255] * p_size)
@@ -195,12 +213,9 @@ class KoginGraphPlugin(Gimp.PlugIn):
                 dest_pixels[dest_pos: dest_pos + p_size] = blackval
 
         dst_rect = Gegl.Rectangle.new(0, 0, new_width, new_height)
-
-        dst_buffer.set(
-            dst_rect,
-            "R'G'B'A u8",
-            bytes(dest_pixels),
-        )
+        dst_buffer = layer.get_buffer()
+        dst_buffer.set(dst_rect, pixel_format, bytes(dest_pixels))
+        dst_buffer.flush()
 
         layer.update(0, 0, new_width, new_height)
 
@@ -208,7 +223,6 @@ class KoginGraphPlugin(Gimp.PlugIn):
         Gimp.displays_flush()
 
         return procedure.new_return_values(Gimp.PDBStatusType.SUCCESS, GLib.Error())
-
 
 Gimp.main(KoginGraphPlugin.__gtype__, sys.argv)
 

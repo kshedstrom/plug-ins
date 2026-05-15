@@ -20,7 +20,7 @@ from gi.repository import GObject
 from gi.repository import GLib
 
 
-PROC_NAME = "python-fu-knit-graph"
+PROC_NAME = "kh-python3-knit-graph"
 
 def N_(message): return message
 def _(message): return GLib.dgettext(None, message)
@@ -117,10 +117,12 @@ def knit_graph_run(procedure, run_mode, image, drawables, config, data):
 
     return procedure.new_return_values(Gimp.PDBStatusType.SUCCESS, None)
 
-
 class KnitGraph(Gimp.PlugIn):
     def do_query_procedures(self):
         return [PROC_NAME]
+
+    def do_set_i18n (self, name):
+        return False
 
     def do_create_procedure(self, name):
         if name != PROC_NAME:
