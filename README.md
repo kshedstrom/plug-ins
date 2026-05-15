@@ -18,12 +18,12 @@ for an example.
 
 This all worked fine under Python 2 and Gimp 2 back in the day. For newer
 operating systems that don't come with Python 2, it seems we have to migrate
-to Gimp 3 which works with Python 3. This is a work in progress, meanwhile
-there are both gimp2 and gimp3 directories containing the old and new codes.
+to Gimp 3 which works with Python 3. I now have both gimp2 and gimp3
+directories containing the old and new codes.
 
 # To Install
 
-Place the *.py scripts in your plug-ins directory and the brushes
+Place the \*.py scripts in your plug-ins directory and the brushes
 in the brushes directory. The plug-ins should show up under the Image menu.
 
 To find where they have to go, Gimp has a Preferences menu. This menu is under
@@ -57,8 +57,4 @@ I don't have a PC to test.
 
 # Things to fix
 
-Note: If you have an alpha channel, the results of the knitting
-script looks weird. Better to remove the alpha channel (image -> flatten),
-though that is a bug I might fix someday, someday.
-
-More work to do on Gimp 3 side.
+Is it all working in Gimp 3 now? It seems better.
