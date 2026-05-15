@@ -61,7 +61,4 @@ Note: If you have an alpha channel, the results of the knitting
 script looks weird. Better to remove the alpha channel (image -> flatten),
 though that is a bug I might fix someday, someday.
 
-I wish I knew how to make the brushes work with the foreground color.
-Is that on my end or GIMP's?
-
 More work to do on Gimp 3 side.
